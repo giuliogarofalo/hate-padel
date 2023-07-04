@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "ts-node paddle.ts",
-    "test": "ts-jest"
+    "works": "ts-node works.ts",
+    "works2": "ts-node works2.ts",
+    "test": "ts-jest "
   },
   "keywords": [],
   "author": "",
