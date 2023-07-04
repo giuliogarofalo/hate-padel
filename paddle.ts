@@ -67,14 +67,12 @@ class PadelGame {
   }
 
   private printGameScore(game: Game): void {
-    const { team1, team2, score, gameState } = game;
+    const { team1, team2, score } = game;
     const scoreString1 = this.getScoreString(score[0]);
     const scoreString2 = this.getScoreString(score[1]);
-    const gameStateString = gameState === GameState.Deuce ? 'Deuce' : gameState;
 
     console.log(`${team1.name}: ${scoreString1}`);
     console.log(`${team2.name}: ${scoreString2}`);
-    console.log(`Game status: ${gameStateString}\n`);
   }
 
   private playPoint(game: Game): Game {
@@ -86,48 +84,72 @@ class PadelGame {
 
     const [score1, score2] = score;
     const winningTeam = this.getRandomWinner();
+    console.log(`${winningTeam.name} wins the point!`);
     const experienceDifference = this.team1.experience - this.team2.experience;
     const winProbability = (experienceDifference + 100) / 200; // Adjusted win probability based on experience
 
     if (winningTeam === this.team1) {
+
       if (gameState === GameState.Advantage) {
         return { ...game, score: [score1 + 1, score2], gameState: GameState.GameOver };
-      } else if (gameState === GameState.Deuce || Math.random() < winProbability) {
+      } else if (Math.random() < winProbability) {
         if (score1 === Point.Forty) {
           return { ...game, score: [score1 + 1, score2], gameState: GameState.Advantage };
         } else if (score1 < Point.Forty) {
           return { ...game, score: [score1 + 1, score2], gameState };
         }
       }
-    } else if (winningTeam === this.team2) {
+    } 
+    if (winningTeam === this.team2) {
+     
       if (gameState === GameState.Advantage) {
-        return { ...game, score: [score1, score2 + 1], gameState: GameState.GameOver };
-      } else if (gameState === GameState.Deuce || Math.random() < (1 - winProbability)) {
+        return { 
+          ...game, 
+          score: [score1, score2 + 1], 
+          gameState: GameState.GameOver 
+        };
+      
+      } else if (Math.random() < (1 - winProbability)) {
         if (score2 === Point.Forty) {
-          return { ...game, score: [score1, score2 + 1], gameState: GameState.Advantage };
+
+          return { 
+            ...game, 
+            score: [score1, score2 + 1], 
+            gameState: GameState.Advantage 
+          };
+
         } else if (score2 < Point.Forty) {
           return { ...game, score: [score1, score2 + 1], gameState };
         }
       }
     }
 
-    return { ...game, gameState: GameState.Deuce };
+    return { ...game };
   }
 
   private isSetFinished(set: Set): boolean {
+    // These variables are initialized with the total scores of team 1 and team 2 within the set object. 
+    // The reduce function is applied to the games array within the set object, accumulating the scores of team 1 and team 2 in total1 and total2, respectively. Initially, the total values are set to 0.
     const [games1, games2] = set.games.reduce(
       ([total1, total2], game) => [total1 + game.score[0], total2 + game.score[1]],
       [0, 0]
     );
-
+    console.log(`Games: ${games1} - ${games2}`);
+    // The difference in games between the teams is calculated using the Math.abs() function. This returns the absolute value of the difference between games1 and games2. This value represents the score difference between the teams.
     const gameDifference = Math.abs(games1 - games2);
-    return (games1 >= 6 || games2 >= 6) && gameDifference >= 2;
+    
+    // The sum of games for team 1 (games1) is greater than or equal to 6 OR the sum of games for team 2 (games2) is greater than or equal to 6. This indicates that one of the teams has reached at least 6 games.
+    const isTieBreak = games1 === 6 && games2 === 6;
+    return isTieBreak;
   }
 
   private playSet(set: Set): void {
     const games: Game[] = [];
-    let gameState: GameState = GameState.Deuce;
-    let game: Game = { team1: this.team1, team2: this.team2, score: [Point.Love, Point.Love], gameState };
+    // let gameState: GameState = GameState.Deuce;
+    let game: Game = {
+      team1: this.team1, team2: this.team2, score: [Point.Love, Point.Love],
+      gameState: GameState.Deuce
+    };
 
     while (!this.isSetFinished(set)) {
       game = this.playPoint(game);
