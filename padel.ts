@@ -67,30 +67,6 @@ class PadelGame {
     }
   }
 
-  // private isSetFinished(set: Set): boolean {
-  //   // These variables are initialized with the total scores of team 1 and team 2 within the set object. 
-  //   // The reduce function is applied to the games array within the set object, accumulating the scores of team 1 and team 2 in total1 and total2, respectively. 
-  //   // Initially, the total values are set to 0.
-  //   for (const game of set.games) {
-  //     const [score1, score2] = game.score;
-  //     console.log(`Each Game score: ${this.team1.name}: ${score1} | ${this.team2.name}: ${score2}\n`)
-  //     // if (score1 === Point.Forty && score2 === Point.Forty) {
-  //     //   return false;
-  //     // }
-  //   }
-  //   const [games1, games2] = set.games.reduce(
-  //     ([total1, total2], game) => [total1 + game.score[0], total2 + game.score[1]],
-  //     [0, 0]
-  //   );
-  //   // This returns the absolute value of the difference between games1 and games2. 
-  //   // This value represents the score difference between the teams.
-  //   const gameDifference = Math.abs(games1 - games2);
-    
-  //   // The sum of games for team 1 (games1) is greater than or equal to 6 OR the sum of games for team 2 (games2) is greater than or equal to 6. This indicates that one of the teams has reached at least 6 games.
-  //   const isTieBreak = games1 === 6 && games2 === 6;
-  //   return isTieBreak;
-  // }
-
   private printGameScore(game: Game): void {
     const { team1, team2, score } = game;
     const scoreString1 = this.getScoreString(score[0]);
@@ -105,10 +81,6 @@ class PadelGame {
   private playGame(game: Game): Game {
     const { score } = game;
 
-
-    // console.log(`Game score: ${this.team1.name}: ${score[0]} | ${this.team2.name}: ${score[1]}\n`)
-
-
     const [score1, score2] = score;
     
     console.log(`Temporary Score:$ ${this.team1.name} has ${Point[score1]} - ${this.team2.name} has ${Point[score2]}`)
@@ -121,7 +93,6 @@ class PadelGame {
     const experienceDifference = this.team1.experience - this.team2.experience;
     const winProbability = (experienceDifference + 100) / 200; // Adjusted win probability based on experience
 
-    // if (winningTeam === this.team1) {
 
     if (score1 === Point.Forty && score2 === Point.Forty) {
       console.log("Deuce!");
@@ -130,62 +101,30 @@ class PadelGame {
         score: [score1, score2], 
       };
 
-      // if game is in Deuce state, then the next point will give advantage to the winning team
-      
-      // if (score1 === Point.Forty) {
-      //   return { ...game, score: [score1 + 1, score2], gameState: GameState.Advantage };
-      // } else if (score1 < Point.Forty) {
-      //   return { ...game, score: [score1 + 1, score2], gameState };
-      // }
+       
+        //   when score1 === Point.Forty && score2 === Point.Forty
+        // every next point will be counted as advantagePoint (0: default, 1, 1) and displayed in log
+        // if a team wins two consecutive advantagePoints, he wins the game
+        // if a team wins one advantagePoint, will be logged "Advantage! ${winningTeam}" 
+        // if a team loses one advantagePoint, will be logged "Deuce!" and if team1's advantagePoint are 0 and team2's advantagePoint are 0, log will be "Deuce!" and the game will continue
+        
+        // when score1 === Point.Forty && score2 === Point.Forty
+        // if a team loses one advantagePoint, the other team wins
 
     }
-    // } 
 
-    if (winningTeam === this.team2) {
-     
-      // if (gameState === GameState.None) {
-      //   return { 
-      //     ...game, 
-      //     score: [score1, score2 + 1], 
-      //     gameState: GameState.None 
-      //   };
-      
-      // } else 
-
-      // if (Math.random() < (1 - winProbability)) {
-      //   if (score2 === Point.Forty) {
-
-      //     return { 
-      //       ...game, 
-      //       score: [score1, score2 + 1], 
-      //       gameState: GameState.Advantage 
-      //     };
-
-      //   } else if (score2 < Point.Forty) {
-      //     return { ...game, score: [score1, score2 + 1], gameState };
-      //   }
-      // }
-    }
-    
-    // console.log(`${winningTeam.name} wins the game!`);
-    console.log('');
-
-    return { ...game };
   }
 
 
   private playSet(set: Set): void {
     const games: Game[] = [];
-    // let gameState: GameState = GameState.Deuce;
     let game: Game = {
       team1: this.team1, 
       team2: this.team2, 
       score: [Point.Love, Point.Love],
     };
 
-    while (
-      // !this.isSetFinished(set)
-      ) {
+    
       
       game = this.playGame(game);
       
@@ -204,14 +143,15 @@ class PadelGame {
 
         console.log(`Game score: ${this.team1.name}: ${game.score[0]} | ${this.team2.name}: ${game.score[1]}\n`);
       
-    }
+    
 
     set.games = games;
   }
 
   private playMatch(): void {
-    // check if team1 or team2 has won the match
+    // log if team1 or team2 has won the match
     console.log(this.match.winner)
+
     // play sets until one team has won the match
     for (let i = 0; i < this.match.numberOfSets; i++) {
       if (!this.match.winner) {
@@ -221,7 +161,6 @@ class PadelGame {
         this.match.sets.push(set);
       }
     }
-
 
     const [sets1, sets2] = this.match.sets.reduce(
       ([total1, total2], set) => {

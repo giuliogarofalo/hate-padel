@@ -213,10 +213,10 @@ class PadelGame {
             output: process.stdout,
         });
         
-        rl.question('Enter the name of Team 1: ', (team1Name) => {
-            rl.question('Enter the name of Team 2: ', (team2Name) => {
-                rl.question('Enter the experience level of Team 1 (0-100): ', (team1Experience) => {
-                    rl.question('Enter the experience level of Team 2 (0-100): ', (team2Experience) => {
+        rl.question('Enter the name of Team 1: ', (team1Name: string) => {
+            rl.question('Enter the name of Team 2: ', (team2Name: string) => {
+                rl.question('Enter the experience level of Team 1 (0-100): ', (team1Experience: string) => {
+                    rl.question('Enter the experience level of Team 2 (0-100): ', (team2Experience: string) => {
                         rl.close();
                         
                         this.team1.name = team1Name;
