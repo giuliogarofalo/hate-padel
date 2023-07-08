@@ -84,18 +84,21 @@ class PadelGame {
                     
                     // turns
                     const winningTeam: Team = this.calculatePointWinner(game.team1, game.team2);
+                    const losingTeam: Team = winningTeam.name === game.team1.name ? game.team2 : game.team1;
                     console.log(`Point winner: ${winningTeam.name}`)
                     console.log('')
                     
-                    winningTeam.score++;
+                    // winningTeam.score++;
                     
                     if (winningTeam.name === game.team1.name) { // Team 1 wins the point
                         // update gameScore value adding 1 Point
-                        game.score[0] = game.score[0] + 1;
+                        // game.score[0] = game.score[0] + 1;
+                        winningTeam.score++
                     } else { // Team 2 wins the point
-                        game.score[1] = game.score[0] + 1;
+                        // game.score[1] = game.score[0] + 1;
+                        losingTeam.score++
                     }
-                    console.log(`Temporary score of the game: Team1 ${Point[set.gamesScore[0]]} - Team2 ${Point[set.gamesScore[1]]}`)
+                    console.log(`Temporary score of the game: Team1 ${Point[winningTeam.score[0]]} - Team2 ${Point[losingTeam.score[1]]}`)
 
                     // Check if a team has won the turn
                     // if (game.score[0] === 3 || game.score[1] === 3) {
@@ -106,10 +109,8 @@ class PadelGame {
 
                     // }
 
-                    if (game.score[0] === 3 || game.score[1] === 3) {
-                        const winnerIndex = game.score[0] === 3 ? 0 : 1;
-                      
-                        game.winner = winnerIndex === 0 ? game.team1 : game.team2;
+                    if (winningTeam.score === 3) {
+                        set.gamesScore[0] = 
                         set.gamesScore[winnerIndex] = set.gamesScore[winnerIndex] + 1;
                     }
 
@@ -179,11 +180,11 @@ class PadelGame {
     
     //     // Play games within the set until one team wins
     //     while (!set.winner) {
-    //         const game: Game = { 
-    //             team1: { ...this.team1 }, 
-    //             team2: { ...this.team2 }, 
-    //             winner: undefined 
-    //         };
+            // const game: Game = { 
+            //     team1: { ...this.team1 }, 
+            //     team2: { ...this.team2 }, 
+            //     winner: undefined 
+            // };
     
     //         this.playGame(game);
     
@@ -203,23 +204,23 @@ class PadelGame {
     //     console.log('Set winner:', set.winner);
     // }
     
-    // playGame(game: Game, set: Set) {
-    //     // Play points within the game until one team wins
-    //     console.log('--- Starting a new game ---')
-    //     console.log('')
-    //     while (!game.winner) {
+    playGame(game: Game, set: Set) {
+        // Play points within the game until one team wins
+        console.log('--- Starting a new game ---')
+        console.log('')
+        while (!game.winner) {
             
-    //         const winningTeam = this.calculatePointWinner(game.team1, game.team2);
+            const winningTeam = this.calculatePointWinner(game.team1, game.team2);
             
-    //         winningTeam.score++;
+            winningTeam.score++;
             
-    //         // Check if a team has won the game
-    //         // if (winningTeam.score >= 4 && winningTeam.score - 2 >= game.team2.score) {
-    //         //     game.winner = winningTeam.name;
-    //         // } else if (game.team1.score === 40 && game.team2.score === 40) {
-    //         //     this.handleDeuce(game);
-    //         // }
-    //     }
+            // Check if a team has won the game
+            // if (winningTeam.score >= 4 && winningTeam.score - 2 >= game.team2.score) {
+            //     game.winner = winningTeam.name;
+            // } else if (game.team1.score === 40 && game.team2.score === 40) {
+            //     this.handleDeuce(game);
+            // }
+        }
         
     //     console.log('Game winner:', game.winner);
 
