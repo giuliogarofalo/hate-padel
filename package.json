@@ -7,6 +7,9 @@
     "start": "ts-node paddle.ts",
     "padel": "ts-node padel.ts",
     "padel2": "ts-node padel.ts",
+    "padel3": "ts-node padel3.ts",
+    "padel4": "ts-node padel4.ts",
+
     "works": "ts-node works.ts",
     "works2": "ts-node works2.ts",
     "works3": "ts-node works3.ts",
