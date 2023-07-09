@@ -11,32 +11,21 @@ interface Team {
     name: string;
     score: number;
     experience: number;
-    advantage: 0 | 1 | 2;
-    winner?: Team;
 }
 
 interface Set {
-    winner: Team;
-    gamesScore: [number, number];
-    numberOfGames: number;
-}
-
-interface Game {
-    team1: Team;
-    team2: Team;
-    winner: Team | undefined;
-    // score: [Point, Point];
-    score: [number, number];
+    team1Games: number;
+    team2Games: number;
+    winner: string | undefined;
 }
 
 interface Match {
     sets: Set[];
-    winner?: Team;
     numberOfSets: number;
-    setsScore: [number, number];
+    winner: string | undefined;
 }
 
-class PadelGame {
+class TennisGame {
     team1: Team;
     team2: Team;
     match: Match;
@@ -47,248 +36,203 @@ class PadelGame {
         this.match = match;
     }
     
-    startMatch() {
-        
-        // Play Sets in the Match by cycling through sets
+    startGame() {
         for (let setIndex = 0; setIndex < this.match.numberOfSets; setIndex++) {
+            console.log('');
+            console.log(`--- Starting a new set --- ${setIndex + 1}`)
             
-            const set: Set = {
-                // games: [], 
-                winner: undefined,
-                gamesScore: [0, 0],
-                numberOfGames: 0
-            };
+            const set: Set = { team1Games: 0, team2Games: 0, winner: undefined };
+            this.playSet(set);
+            this.match.sets.push(set);
             
+            // temporary score of the set
+            if (this.match.sets.length > 0) {
+                
+                console.log('---');
+                console.log(`       ${this.team1.name} - ${this.team2.name}`);
+                console.log('');
+                for (let i = 0; i < this.match.sets.length; i++) {
+                    console.log(`Set ${i + 1}: ${this.match.sets[i].team1Games} - ${this.match.sets[i].team2Games}`);
+                }
+                console.log('---');
+            }
             
-            console.log('--- Starting a new set ---')
             console.log('')
 
-            console.log(`Set ${setIndex + 1}`)
+            this.match.winner ? console.log('Match winner:', this.match.winner) : null;
             
+            const team1Sets = this.match.sets.filter((set) => set.winner === this.team1.name).length;
+            const team2Sets = this.match.sets.filter((set) => set.winner === this.team2.name).length;
+            console.log(`${team1Sets} - ${team2Sets}`);
             
-            // this.playSet(set);
-            while (!this.match.winner) {
-                const game: Game = {
-                    team1: { ...this.team1 },
-                    team2: { ...this.team2 },
-                    winner: undefined,
-                    score: [Point.Love, Point.Love],
-                };
-                
-                // this.playGame(game);
-                console.log('--- Starting a new game ---')
-                console.log('')
-
-
-                while (!game.winner) {
-                    
-                    // turns
-                    const winningTeam: Team = this.calculatePointWinner(game.team1, game.team2);
-                    const losingTeam: Team = winningTeam.name === game.team1.name ? game.team2 : game.team1;
-                    console.log(`Point winner: ${winningTeam.name}`)
-                    console.log('')
-                    
-                    // winningTeam.score++;
-                    
-                    if (winningTeam.name === game.team1.name) { // Team 1 wins the point
-                        // update gameScore value adding 1 Point
-                        // game.score[0] = game.score[0] + 1;
-                        winningTeam.score++
-                    } else { // Team 2 wins the point
-                        // game.score[1] = game.score[0] + 1;
-                        losingTeam.score++
-                    }
-                    console.log(`Temporary score of the game: Team1 ${Point[winningTeam.score[0]]} - Team2 ${Point[losingTeam.score[1]]}`)
-
-                    // Check if a team has won the turn
-                    // if (game.score[0] === 3 || game.score[1] === 3) {
-                    //     game.winner = game.score[0] === 3 ? game.team1 : game.team2;
-                    //     // game.winner.name === game.team1.name ? set.gamesScore[0]++ : set.gamesScore[1]++;
-                    //     set.gamesScore[0] = game.score[0] === 3 ? game.score[0] + 1 : null;
-                    //     set.gamesScore[1] = game.score[1] === 3 ? game.score[1] + 1 : null
-
-                    // }
-
-                    if (winningTeam.score === 3) {
-                        set.gamesScore[0] = 
-                        set.gamesScore[winnerIndex] = set.gamesScore[winnerIndex] + 1;
-                    }
-
-                    set.numberOfGames++;
-                    console.log(`Number of games played: ${set.numberOfGames}`)
-
-                    // if number of games won in a set is more then 5, check if a team has won the set
-                    
-
-                }
-                
-            // console.log('Game winner:', game.winner.name);
-
-            // calculate the winner of the set
-                if (
-                    set.gamesScore[0] >= 5 || set.gamesScore[1] >= 5 && 
-                    (
-                    set.gamesScore[0] - set.gamesScore[1] >= 2 ||
-                    set.gamesScore[0] - set.gamesScore[1] > 5)) {
-
-                    const winnerIndex = set.gamesScore[0] >= 5 || set.gamesScore[1] >= 5 && 
-                    (
-                    set.gamesScore[0] - set.gamesScore[1] >= 2 ||
-                    set.gamesScore[0] - set.gamesScore[1] > 5) ? 0 : 1;
-
-                    console.log(`Set winner : ${game[winnerIndex].name}`)
-                    
-                    this.match.setsScore[winnerIndex] = this.match.setsScore[winnerIndex] + 1;
-                    
-                    
-                    // set.winner = winnerIndex === 0 ? game.team1 : game.team2;
-                    // this.match.setsScore[winnerIndex] = this.match.setsScore[winnerIndex] + 1;
-                }
-
-                
-                console.log(`Temoporary set score Team1 ${game.team1.score} - Team2 ${game.team2.score}`)
-                console.log(`Winner of the match: ${game.winner}`)
-                
+            if(team1Sets > team2Sets) {
+                    this.match.winner = this.team1.name;
+            }
+            if (team2Sets > team1Sets) {
+                this.match.winner = this.team2.name;
+            } 
         }
-          
-            // console.log('Set winner:', set.winner);
+        
+    }  
+    
+    
+    playSet(set: Set) {
+        while (!set.winner) {
+            const game: [number, number] = [0, 0];
+            this.playGame(game);
             
-            // save result of the game in gamescore
-            // set.gamesScore[0] = set.games.filter((game) => game.winner === this.team1.name).length;
-            // this.match.sets.push(set);
+            console.log('Score of the last game:', game[0], '-', game[1])
+
+            // accumulate the score of the set
+            if (game[0] === 3 && game[0] > game[1]) {
+
+                set.team1Games++
+            }
+            if (game[1] === 3 && game[1] > game[0]) {
+                set.team2Games++
+            }
+
+            console.log('Game\'s Set Game Score:', set.team1Games, '-', set.team2Games);
+            console.log('');
             
-            // Check if a team has already won the match
-            
-            if (this.match.winner) {
-                break;
+            // If the team with advantage wins more than 5 games
+            if(set.team1Games >= 6 || set.team2Games >= 6) {
+                
+                if (set.team1Games - set.team2Games >= 2) {
+                    set.winner = this.team1.name;
+                } 
+                
+                if (set.team2Games - set.team1Games >= 2) {
+                    set.winner = this.team2.name;
+                } 
+                
+                if (set.team1Games === set.team2Games && (set.team1Games >= 6 || set.team2Games >= 6)) {
+                    this.handleDeuce(game);
+                }
             }
         }
         
-        console.log(`this.match.winner: ${this.match.winner}`)
         
-        
-        // if (team1Sets > team2Sets) {
-        //     this.match.winner = this.team1.name;
-        // } else if (team2Sets > team1Sets) {
-        //     this.match.winner = this.team2.name;
-        // }
-        
-        console.log('Match winner:', this.match.winner);
+        console.log('Set winner:', set.winner);
     }
     
-    // playSet(set: Set) {
+    playGame(game: [number, number]) {
+        while (!this.isGameComplete(game)) {
+            console.log("New Game");
+            console.log('---');
+            console.log('');
+            const winningTeam = this.calculatePointWinner();
+            console.log('Game winner:', game[0] > game[1] ? this.team1.name : this.team2.name);
+            game[winningTeam]++;
+            console.log('Game score:', Point[game[0]], '-', Point[game[1]]);
+            // console.log('Game score:', game[0], '-', game[1]);
+        }
+        console.log('');
+        console.log('--- End Game ---');
+        
+    }
     
-    //     // Play games within the set until one team wins
-    //     while (!set.winner) {
-            // const game: Game = { 
-            //     team1: { ...this.team1 }, 
-            //     team2: { ...this.team2 }, 
-            //     winner: undefined 
-            // };
+    isGameComplete(game: [number, number]): boolean {
+        return game[0] === 3 || game[1] === 3;
+    }
     
-    //         this.playGame(game);
-    
-    //         console.log(`Game ${set.gamesScore[0] + set.gamesScore[1] + 1}`)
-    //         set.gamesScore[0] = set.gamesScore[0] + game.team1.score;
-    //         // set.games.push(game.team1.score);
-    //         // set.games.push(game.team2.score);
-    
-    //         // Check if a team has already won the set
-    //         if (game.winner) {
-    //             set.winner = game.winner;
-    //         }
-    //         console.log(`Temoporary set score Team1 ${game.team1.score} - Team2 ${game.team2.score}`)
-    //         console.log(`Winner of the game: ${game.winner}`)
-    //     }
-    
-    //     console.log('Set winner:', set.winner);
-    // }
-    
-    playGame(game: Game, set: Set) {
-        // Play points within the game until one team wins
-        console.log('--- Starting a new game ---')
-        console.log('')
-        while (!game.winner) {
+    handleDeuce(game: [number, number]) {
+        console.log('Deuce!');
+
+        let advantagePoints: [number, number] = [0, 0];
+        let prevWinner: number | null = null;
+
+        let advantageTeam: number | null = null;
+        
+        while (advantageTeam === null) {
+            console.log(`Advantage points: ${advantagePoints[0]} - ${advantagePoints[1]}`)
             
-            const winningTeam = this.calculatePointWinner(game.team1, game.team2);
-            
-            winningTeam.score++;
-            
-            // Check if a team has won the game
-            // if (winningTeam.score >= 4 && winningTeam.score - 2 >= game.team2.score) {
-            //     game.winner = winningTeam.name;
-            // } else if (game.team1.score === 40 && game.team2.score === 40) {
-            //     this.handleDeuce(game);
-            // }
+            const winningTeam = this.calculatePointWinner();
+            advantagePoints[winningTeam]++;
+
+            if (prevWinner !== winningTeam) {
+                console.log("Back in Deuce!");
+                advantagePoints[winningTeam] = 0;
+                console.log(`Advantage p: ${advantagePoints[0]} - ${advantagePoints[1]}`)
+            }
+
+            prevWinner = winningTeam;
+
+
+            // If the team with advantage wins 2 consecutive points
+            if (advantagePoints[winningTeam] === 2) {
+                console.log(winningTeam === 0 ? this.team1.name : this.team2.name, 'wins the game!');
+                advantageTeam = winningTeam;
+            }
         }
         
-    //     console.log('Game winner:', game.winner);
-
-    //     set.gamesScore[0] = set.gamesScore[0] + 1;
-        
-    //     // set.gameScore[0] = set.gameScore[0] + game.team1.score;
-    // }
+        console.log('Game winner:', advantageTeam === 0 ? this.team1.name : this.team2.name);
+    }
     
-    // handleDeuce(game: Game) {
-    //     // Implement the logic for handling "Deuce" and "Advantage" situations
-    //     // You can modify this based on the game rules of Padel
-    //     console.log(`Deuce between ${game.team1.name} and ${game.team2.name}`);
-        
-    //     // Use readline or other means to get input from the user for the advantage winner
-    //     // Update game.team1.advantage and game.team2.advantage based on the input
-    // }
-    
-    calculatePointWinner(team1: Team, team2: Team): Team {
-        // Implement an algorithm to determine the winner of each point randomly based on team experience
-        // You can use the team's experience values to calculate probabilities
-        
-        // Return the winning team based on the algorithm
-        // For example:
-        const randomValue = Math.random();
-        const winnerExperienceFactor = team1.experience / (team1.experience + team2.experience);
-        const winner = randomValue < winnerExperienceFactor ? team1 : team2;
-        return winner;
+    calculatePointWinner(): number {
+        return Math.random() < this.team1.experience / (this.team1.experience + this.team2.experience) ? 0 : 1;
     }
 }
-
 
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
 });
 
-rl.question('Enter the name of Team 1: ', (team1Name) => {
-    rl.question('Enter the name of Team 2: ', (team2Name) => {
-        rl.question('Enter the experience level of Team 1 (0-100): ', (team1Experience) => {
-            rl.question('Enter the experience level of Team 2 (0-100): ', (team2Experience) => {
-                rl.question('Enter the number of Sets: ', (numberOfSets) => {
-                    rl.close();
-                    
-                    const match: Match = {
-                        sets: [],
-                        numberOfSets: parseInt(numberOfSets, 10),
-                        winner: undefined,
-                        setsScore: [0, 0],
-                    };
-                    
-                    const team1: Team = {
-                        name: team1Name,
-                        experience: parseInt(team1Experience, 10),
-                        advantage: 0,
-                        score: 0
-                    };
-                    
-                    const team2: Team = {
-                        name: team2Name,
-                        experience: parseInt(team2Experience, 10),
-                        advantage: 0,
-                        score: 0
-                    };
-                    
-                    const startMatch = new PadelGame(team1, team2, match);
-                    startMatch.startMatch();
-                });
-            });
+const promptUserInput = (question: string): Promise<string> => {
+    return new Promise((resolve) => {
+        rl.question(question, (input: string) => {
+            resolve(input);
         });
     });
-});
+};
+
+const promptNumberInput = async (question: string): Promise<number> => {
+    while (true) {
+        const input = await promptUserInput(question);
+        const number = parseInt(input, 10);
+        if (!isNaN(number) && number >= 0 && number <= 100) {
+            return number;
+        }
+        
+        console.log('Invalid input. Please enter a number.\n');
+    }
+};
+
+const readInputs = async () => {
+    try {
+        const team1Name = await promptUserInput('Enter the name of Team 1: ');
+        const team2Name = await promptUserInput('Enter the name of Team 2: ');
+        const team1Experience = await promptNumberInput('Enter the experience level of Team 1 (0-100): ');
+        const team2Experience = await promptNumberInput('Enter the experience level of Team 2 (0-100): ');
+        const numberOfSets = await promptNumberInput('Enter the number of Sets: ');
+        
+        rl.close();
+        
+        const match = {
+            sets: [],
+            numberOfSets,
+            winner: undefined,
+        };
+        
+        const team1 = {
+            name: team1Name,
+            score: 0,
+            experience: team1Experience,
+        };
+        
+        const team2 = {
+            name: team2Name,
+            score: 0,
+            experience: team2Experience,
+        };
+        
+        const game = new TennisGame(team1, team2, match);
+        game.startGame();
+    } catch (error: unknown) {
+        console.log(error);
+        rl.close();
+    }
+};
+
+readInputs();
