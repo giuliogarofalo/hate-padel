@@ -1,31 +1,7 @@
 import * as readline from 'readline';
+import { Team, Match, Point, PadelSet } from './types';
 
-enum Point {
-    Love = 0,
-    Fifteen = 1,
-    Thirty = 2,
-    Forty = 3,
-}
-
-interface Team {
-    name: string;
-    score: number;
-    experience: number;
-}
-
-interface Set {
-    team1Games: number;
-    team2Games: number;
-    winner: string | undefined;
-}
-
-interface Match {
-    sets: Set[];
-    numberOfSets: number;
-    winner: string | undefined;
-}
-
-class TennisGame {
+export class PadelGame {
     team1: Team;
     team2: Team;
     match: Match;
@@ -41,7 +17,7 @@ class TennisGame {
             console.log('');
             console.log(`--- Starting a new set --- ${setIndex + 1}`)
             
-            const set: Set = { team1Games: 0, team2Games: 0, winner: undefined };
+            const set: PadelSet = { team1Games: 0, team2Games: 0, winner: undefined };
             this.playSet(set);
             this.match.sets.push(set);
             
@@ -59,24 +35,26 @@ class TennisGame {
             
             console.log('')
 
-            this.match.winner ? console.log('Match winner:', this.match.winner) : null;
             
             const team1Sets = this.match.sets.filter((set) => set.winner === this.team1.name).length;
             const team2Sets = this.match.sets.filter((set) => set.winner === this.team2.name).length;
             console.log(`${team1Sets} - ${team2Sets}`);
             
             if(team1Sets > team2Sets) {
-                    this.match.winner = this.team1.name;
+                this.match.winner = this.team1.name;
             }
             if (team2Sets > team1Sets) {
                 this.match.winner = this.team2.name;
-            } 
+            }
+            if (team1Sets === team2Sets) {
+                console.log('Tie');
+                this.match.winner = 'None';
+            }
+            this.match.winner ? console.log('Match winner:', this.match.winner) : null;
         }
-        
     }  
     
-    
-    playSet(set: Set) {
+    playSet(set: PadelSet) {
         while (!set.winner) {
             const game: [number, number] = [0, 0];
             this.playGame(game);
@@ -129,7 +107,6 @@ class TennisGame {
         }
         console.log('');
         console.log('--- End Game ---');
-        
     }
     
     isGameComplete(game: [number, number]): boolean {
@@ -227,7 +204,7 @@ const readInputs = async () => {
             experience: team2Experience,
         };
         
-        const game = new TennisGame(team1, team2, match);
+        const game = new PadelGame(team1, team2, match);
         game.startGame();
     } catch (error: unknown) {
         console.log(error);
