@@ -34,7 +34,7 @@ export class PadelGame {
             }
             
             console.log('')
-
+            
             
             const team1Sets = this.match.sets.filter((set) => set.winner === this.team1.name).length;
             const team2Sets = this.match.sets.filter((set) => set.winner === this.team2.name).length;
@@ -60,16 +60,16 @@ export class PadelGame {
             this.playGame(game);
             
             console.log('Score of the last game:', game[0], '-', game[1])
-
+            
             // accumulate the score of the set
             if (game[0] === 3 && game[0] > game[1]) {
-
+                
                 set.team1Games++
             }
             if (game[1] === 3 && game[1] > game[0]) {
                 set.team2Games++
             }
-
+            
             console.log('Game\'s Set Game Score:', set.team1Games, '-', set.team2Games);
             console.log('');
             
@@ -115,10 +115,10 @@ export class PadelGame {
     
     handleDeuce(game: [number, number]) {
         console.log('Deuce!');
-
+        
         let advantagePoints: [number, number] = [0, 0];
         let prevWinner: number | null = null;
-
+        
         let advantageTeam: number | null = null;
         
         while (advantageTeam === null) {
@@ -126,16 +126,16 @@ export class PadelGame {
             
             const winningTeam = this.calculatePointWinner();
             advantagePoints[winningTeam]++;
-
+            
             if (prevWinner !== winningTeam) {
                 console.log("Back in Deuce!");
                 advantagePoints[winningTeam] = 0;
                 console.log(`Advantage p: ${advantagePoints[0]} - ${advantagePoints[1]}`)
             }
-
+            
             prevWinner = winningTeam;
-
-
+            
+            
             // If the team with advantage wins 2 consecutive points
             if (advantagePoints[winningTeam] === 2) {
                 console.log(winningTeam === 0 ? this.team1.name : this.team2.name, 'wins the game!');
