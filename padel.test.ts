@@ -49,41 +49,35 @@ describe('PadelGame', () => {
     let gameScore: [number, number];
 
     beforeEach(() => {
-      gameScore = [0, 0];
+      gameScore = [3,2];
     });
 
     it('should play the game and determine the game winner correctly', () => {
       padelGame.playGame(gameScore);
-      expect(gameScore[0]).toBeGreaterThanOrEqual(0);
-      expect(gameScore[1]).toBeGreaterThanOrEqual(0);
+      expect(gameScore[0]).toBeGreaterThanOrEqual(3);
+      expect(gameScore[1]).toBeGreaterThanOrEqual(2);
     });
-
-    // it('should determine if the game is complete correctly', () => {
-    //   const complete = padelGame.isGameComplete(gameScore);
-    //   console.log(complete)
-    //   expect(complete).toBe(true);
-    // });
   });
 
   describe('handleDeuce', () => {
     let gameScore: [number, number];
 
     beforeEach(() => {
-      gameScore = [0, 0];
+      gameScore = [3, 3];
     });
 
-    it('should handle the deuce situation and determine the game winner correctly', () => {
+    it('should handle the deuce situation', () => {
       padelGame.handleDeuce(gameScore);
-      expect(gameScore[0]).toBeGreaterThanOrEqual(0);
-      expect(gameScore[1]).toBeGreaterThanOrEqual(0);
+      expect(gameScore[0]).toBe(3);
+      expect(gameScore[1]).toBe(3);
     });
   });
 
-  describe('calculatePointWinner', () => {
+  describe('<calculatePointWinner>', () => {
     it('should return the correct team index as the point winner', () => {
       const winnerIndex = padelGame.calculatePointWinner();
-      expect(winnerIndex).toBeGreaterThanOrEqual(0);
-      expect(winnerIndex).toBeLessThanOrEqual(1);
+      expect(winnerIndex).toBe(0);
+      expect(winnerIndex).toBe(1);
     });
   });
 });
