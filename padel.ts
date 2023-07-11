@@ -110,40 +110,52 @@ export class PadelGame {
     }
     
     isGameComplete(game: [number, number]): boolean {
+        // If you have 40 and you win the point you win the game
         return game[0] === 3 || game[1] === 3;
     }
     
+    // If both have 40 the teams are at "deuce".
     handleDeuce(game: [number, number]) {
         console.log('Deuce!');
 
         let advantagePoints: [number, number] = [0, 0];
         let prevWinner: number | null = null;
-
         let advantageTeam: number | null = null;
+        let advantageTeamName: string | null = null;
+        let winningTeamName: string | null = null;
         
         while (advantageTeam === null) {
-            console.log(`Advantage points: ${advantagePoints[0]} - ${advantagePoints[1]}`)
             
-            const winningTeam = this.calculatePointWinner();
+            const winningTeam: number = this.calculatePointWinner();
+            winningTeamName = winningTeam === 0 ? this.team1.name : this.team2.name;
+
             advantagePoints[winningTeam]++;
-
-            if (prevWinner !== winningTeam) {
-                console.log("Back in Deuce!");
-                advantagePoints[winningTeam] = 0;
-                console.log(`Advantage p: ${advantagePoints[0]} - ${advantagePoints[1]}`)
+            
+            // when a team wins a point from deuce, it has advantage “A”            
+                
+            if (winningTeam !== prevWinner && prevWinner === null) {
+                console.log(winningTeamName, 'has an advantage A')
+                // If the game is in deuce, the winner of a point will have advantage “A”
+            }
+            // when a team wins a point from deuce, it has advantage “A”
+            // if a team in advantage loses a point, the game returns to deuce
+            if (winningTeam !== prevWinner && prevWinner !== null) {
+                console.log(`${winningTeamName} has ${advantagePoints[0]} advantage points`);
+                console.log("Both teams are back in Deuce!");
+                advantagePoints = [0, 0];
             }
 
-            prevWinner = winningTeam;
-
-
-            // If the team with advantage wins 2 consecutive points
-            if (advantagePoints[winningTeam] === 2) {
-                console.log(winningTeam === 0 ? this.team1.name : this.team2.name, 'wins the game!');
+            // If a team in advantage wins a point, it wins the game or
+            // if in Deuce, the team that wins two consecutive points wins the set
+            if(winningTeam === prevWinner || advantagePoints[winningTeam] === 2) {
+                console.log(`${winningTeamName} wins ${advantagePoints[winningTeam]} consecutive points!`)
+                console.log(winningTeamName, 'wins the Set!');
+                console.log(`${winningTeamName} has ${advantagePoints[winningTeam]} points, he wins the Game!`)
                 advantageTeam = winningTeam;
+                console.log('Game in Deuce is Over');
             }
+            prevWinner = winningTeam;
         }
-        
-        console.log('Game winner:', advantageTeam === 0 ? this.team1.name : this.team2.name);
     }
     
     calculatePointWinner(): number {
@@ -164,7 +176,7 @@ const promptUserInput = (question: string): Promise<string> => {
     });
 };
 
-const promptNumberInput = async (question: string): Promise<number> => {
+export const promptNumberInput = async (question: string): Promise<number> => {
     while (true) {
         const input = await promptUserInput(question);
         const number = parseInt(input, 10);
