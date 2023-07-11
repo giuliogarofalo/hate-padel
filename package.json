@@ -4,9 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node paddle.ts",
-    "works": "ts-node works.ts",
-    "works2": "ts-node works2.ts",
+    "start": "ts-node padel.ts",
+
     "test": "ts-jest "
   },
   "keywords": [],
